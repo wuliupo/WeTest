@@ -20,5 +20,6 @@ $postStr = $GLOBALS['HTTP_RAW_POST_DATA'];
 $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
 $url = $postObj->Url;
 //echo $url;
+//header('Content-Type: text/xml');
 echo post($url,$postStr);
  ?>
