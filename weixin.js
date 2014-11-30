@@ -132,9 +132,10 @@ $(document).ready(function(){
 		var html = messageBoxContent + "<span class='left'>你说："+keyword+"</span>";
 		$(".messageBox").html(html);
 
+		var isCrosseDomain = url.indexOf(location.host);
 		$.ajax({
 			type:"POST",
-			url:"testpost.php",
+			url:(isCrosseDomain == 6 || isCrosseDomain == 7) ? url : 'testpost.php',
 			processData:false,
 			data:data,
 			contentType:"text/xml",

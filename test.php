@@ -19,12 +19,12 @@ footer{margin-top:20px;border-top:1px solid #999;}
 <body>
 <div class="wrapper">
 <h2>微信公众平台功能在线测试</h2>
-<div>API 地址: <input class="large url" type="text" value="" placeholder="请输入API地址"></div>
+<div>API 地址: <input class="large url" type="text" value="http://localhost/pigcms/weixin.php?token=zmdpln1403188557" placeholder="请输入API地址"></div>
 <div class="messageBox"></div>
 <div class="text">输入内容： <input type="text" class="large keyword" value="home" placeholder="请在此输入内容"></div>
 <div class="position">请输入地址： x=<input type="text" class="xposition" placeholder="X坐标" />, y=<input type="text" class="Yposition" placeholder="Y坐标" /></div>
 <div>发送者openID： <input type="text" class="sendname" value="xred"></div>
-<div>接收者openID： <input type="text" class="receivename" value="wechat"></div>
+<div>接收者openID： <input type="text" class="receivename" value="wechat" value="wuliupo"></div>
 <div><input type="button" class="send btn " value="发送" /></div>
 <footer><p> By <a href="http://xhxh.me">@xred</a></p></footer>
 </div>
