@@ -31,26 +31,28 @@ function loadXML(xmlString){
 	return xmlDoc;
 }
 function displayText(data){
-	if(data.length > 10)data = '</span><pre>' + html_encode(data) + '</pre><span>';
-	$(".messageBox").html($(".messageBox").html() + "<span class='right'>回复："+data+"</span>");
+	$(".messageBox").html($(".messageBox").html() + "<span class='right'>回复：<br/><pre>文本消息："+data+"</pre></span>");
 }
 function displayNews (title,url,description,isFirst) {
 	var html = $(".messageBox").html();
 	if (isFirst == 1) {
-		 html += "<span class='right'>回复：图文消息:<a href='"+url+"' target='_blank' >"+title+"</a></span><br/>";
+		 html += "<span class='right'>回复：<br/><pre>图文消息：<a href='"+url+"' target='_blank' >"+title+"</a></pre></span><br/>";
 	}else{
-		 html += "<span class='right'>图文消息:<a href='"+url+"' target='_blank' >"+title+"</a></span><br/>";
+		 html += "<span class='right'><pre>图文消息：<a href='"+url+"' target='_blank' >"+title+"</a></pre></span><br/>";
 	}
 	$(".messageBox").html(html);
 }
 function displayMusic(title,url,description) {
 	var messageBoxContent = $(".messageBox").html();
-	var html = messageBoxContent + "<span class='right'>回复：音乐消息:<a href='"+url+"' target='_blank' >"+title+"</a></span><br/>";
+	var html = messageBoxContent + "<span class='right'>回复：<br/><pre>音乐消息：<a href='"+url+"' target='_blank' >"+title+"</a></pre></span><br/>";
 	$(".messageBox").html(html);
 }
 function responseParse(data){
 	console.log(data);
+	//data=data.replace(/\r\n|\r|\n|/g, '');
+	data=data.substring(data.indexOf('<xml>'));
 	var xmldoc = loadXML(data);
+	//console.log(xmldoc.documentElement.innerHTML);
 	var content = xmldoc.getElementsByTagName("Content");
 	var msgtype = xmldoc.getElementsByTagName("MsgType");
 	if(!msgtype || msgtype.length < 1){
@@ -65,11 +67,11 @@ function responseParse(data){
 	}
 	if (msgtype == "news") {
 		var items = xmldoc.getElementsByTagName("item");
-		for (var i = items.length - 1; i >= 0; i--) {
+		for (var i = 0; i < items.length; i++) {
 			var title = items[i].getElementsByTagName("Title")[0].firstChild.nodeValue;
 			var url = items[i].getElementsByTagName("Url")[0].firstChild.nodeValue;
 			var description = items[i].getElementsByTagName("Description")[0].firstChild.nodeValue;
-			if (i == items.length) {
+			if (i === 0) {
 				displayNews(title,url,description,1);
 			}else{
 				displayNews(title,url,description,0);
@@ -85,16 +87,15 @@ function responseParse(data){
 }
 
 function html_encode(str){
-	var s = "";
 	if (str.length == 0) return "";
-	s = str.replace(/&/g, "&gt;");
-	s = s.replace(/</g, "&lt;");
-	s = s.replace(/>/g, "&gt;");
-	s = s.replace(/ /g, "&nbsp;");
-	s = s.replace(/\'/g, "&#39;");
-	s = s.replace(/\"/g, "&quot;");
-	s = s.replace(/\n/g, "<br>");
-	return s;
+	//str = str.replace(/&/g, "&gt;");
+	str = str.replace(/</g, "&lt;");
+	str = str.replace(/>/g, "&gt;");
+	str = str.replace(/ /g, "&nbsp;");
+	str = str.replace(/\'/g, "&#39;");
+	str = str.replace(/\"/g, "&quot;");
+	str = str.replace(/\n/g, "<br>");
+	return str;
 }
 
 $(document).ready(function(){
@@ -104,7 +105,16 @@ $(document).ready(function(){
 	$(".setUrl").click(function(){
 		console.log("set url");
 		url = $(".url")[0].value;
-	})
+	});
+	
+	$('.messageBox').on('dblclick', '.right pre', function(){
+		var thi=$(this);
+		if(thi.hasClass('encode')){
+			thi.html(thi.attr('data-old')).removeClass('encode');
+		} else {
+			thi.attr('data-old', thi.html()).html(html_encode(thi.html())).addClass('encode');
+		}
+	});
 
 	$(".send").click(function(e){
 		e.preventDefault();
@@ -139,12 +149,14 @@ $(document).ready(function(){
 			processData:false,
 			data:data,
 			contentType:"text/xml",
+			//dataType: 'xml',
 			success:function(data){
 				responseParse(data);
 			},
 			error:function (XMLHttpRequest, textStatus, errorThrown) {
 				//alert(errorThrown);
 				console.log("error");
+				console.log(XMLHttpRequest.responseText);
 			}
 		})
 	})
